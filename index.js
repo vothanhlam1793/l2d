@@ -7,7 +7,7 @@ const path = require('path')
 
 // Configure Environment
 dotenv.config()
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 // Configure app
 app.use(logger('dev'));
