@@ -1,0 +1,260 @@
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+.control-main {
+    /* border: 2px solid white; */
+    color: white;
+    height: 70vw;
+}
+
+.control-area {
+    float: left;
+    width: calc(100%/6*4);
+}
+
+
+/* Led */
+
+.control-led-y {
+    /* border: 1px solid greenyellow; */
+    height: calc(100%/12);
+    width: 100%;
+    position: relative;
+}
+
+.control-led-area {
+    float: left;
+    /* border: 1px solid yellow; */
+    width: 50%;
+    height: 100%;
+    position: relative;
+}
+
+.control-led {
+    width: 50%;
+    position: absolute;
+    /* border: 1px solid red; */
+}
+
+.led-top {
+    top: 0
+}
+
+.led-bottom {
+    bottom: 0;    
+}
+
+.led-left {
+    left: 5;
+}
+
+.led-right {
+    right: 5;
+}
+
+
+/* Wheel */
+.control-wheel {
+    /* border: 1px solid yellow; */
+    width: calc(100%/6);
+    position: relative;
+    height: 100%;
+    float: left;
+}
+
+.wheel {
+    clear: left;
+    /* border: 2px solid red; */
+    height: 50%;
+    width: 100%;
+    position: relative;
+}
+
+.wheel-img {
+    height: 75%;
+    position: absolute;
+    /* width: 60.0%; */
+    /* border: 1px solid gray; */
+}
+
+.wheel-left {
+    right: 0;
+}
+
+.wheel-top {
+    top: 0;
+}
+
+.wheel-right {
+    left: 0;
+}
+
+.wheel-bottom {
+    bottom: 0;
+}
+
+
+/* Using for xe */
+.control-button {
+    height: calc(100%/12*10);
+}
+
+.control-row {
+    height: calc(100%/3);
+    /* border: 1px solid white; */
+}
+.control-col {
+    float: left;
+    height: 100%;
+    width: calc(100%/3);
+    /* border: 1px solid greenyellow; */
+    position: relative;
+}
+
+.l2d_style {
+    height: 66.67%;
+    /* width: 66.67%; */
+    /* border: 1px solid red; */
+    position: absolute;
+}
+.l2d_top {
+    top: 5;
+}
+.l2d_bottom {
+    bottom: 5;
+}
+
+.l2d_left {
+    left: 10;
+}
+
+.l2d_right {
+    right: 10;
+}
+
+.l2d_middle {    
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+}
+
+.l2d_center {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.control-button-index {
+    /* border: 1px solid pink; */
+    width: 100%;
+    height: 100%;
+    /* position: absolute; */
+    /* bottom: 0; */
+    /* float: right; */
+}
+
+
+/* Live camera */
+
+.camera-live-area {
+    /* border: 2px solid white; */
+    width: 100%;
+    height: 60vw;
+    /* float: left; */
+    /* clear: left; */
+}
+.camera-control-center {
+    /* border: 1px solid red; */
+    width: 100%;
+    height: 85%;
+    position: relative;
+}
+.camera-effect {
+    width: calc(100%/7);
+    height: 100%;
+    /* border: 1px solid red; */
+    float: left;
+    position: relative;
+}
+.camera-effect-center {
+    width: calc(100%/7*5);
+    height: 100%;
+    /* border: 1px solid bisque; */
+    float: left;
+    position: relative;
+}
+.camera-effect-img {
+    width: 100%;
+    position: absolute;
+}
+.camera-effect-img-center {
+    /* height: 90%; */
+    width: 100%;
+    position: absolute;
+
+}
+
+.camera-text {
+    color: white; 
+    height: 10%;
+    text-align: center; 
+    /* border: 1px solid white; */
+}
+
+/* FOOTER */
+
+.footer-main {
+    width: 100%;
+    padding-top: 30;
+    padding-bottom: 30;
+    /* margin-bottom: 20; */
+    /* float: left; */
+    /* border: 1px solid red; */
+    /* height: 100%; */
+}
+
+.f-map {
+    width: 100%;
+    float: left;
+}
+.f-col {
+    float: left;
+    width: calc(100%/3);
+}
+.f-robot {
+
+}
+
+.f-device {
+
+}
+
+.f-img {
+  width: 100%;  
+}
+
+/* FOOTER-INFO */
+.footer-info {
+    background-image: url("/L2D/Material PNG/Footer.png");
+    /* border: 1px solid white; */
+    color: white;
+    width: 100%;
+    padding: 10;
+    /* margin-top: 20px; */
+}
+.f-col-4 {
+    float: left;
+    width: calc(100%/3);
+}
+.f-col-8 {
+    float: left;
+    width: calc(100%/3*2);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 90%;
+    margin: auto;
+    padding: 10px;
+}
+
+/* MAIN - APP */

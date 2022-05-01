@@ -1,0 +1,95 @@
+<div class="footer-main clearfix" id="appFooter">
+    <div class="f-map">
+        <div class="f-col">
+.
+        </div>
+        <div class="f-col"
+            @click="openHref('http://l2d.uudamstudio.com/map/ver2.php')"   
+        >
+            <img 
+                class="f-img"
+                src="/L2D/Material PNG/Live map/Live map blue.png"         
+            >
+        </div>
+        <div class="f-col">
+.
+        </div>
+    </div>
+
+    <div class="f-map">
+        <div class="f-col" @click="openHref('/?location=SAIGON', true)">
+            <location-robot location="SAIGON"></location-robot>
+        </div>
+        <div class="f-col" @click="openHref('/?location=HANOI', true)">
+            <location-robot location="HANOI"></location-robot>
+        </div>
+        <div class="f-col" @click="openHref('/?location=DALAT', true)">
+            <location-robot location="DALAT"></location-robot>
+        </div>
+    </div>
+
+    <div class="f-map">
+        <div class="f-col">
+            <img class="f-img" src="/L2D/Material PNG/Tool to draw/Blue-Robot.png">
+        </div>
+        <div class="f-col">
+            <img class="f-img" src="/L2D/Material PNG/Tool to draw/Blue-Laser.png">
+        </div>
+        <div class="f-col">
+            <img class="f-img" src="/L2D/Material PNG/Tool to draw/Blue-Sclupture.png">
+        </div>
+    </div>
+</div>
+<div class="footer-info clearfix">
+    <div class="f-col-4">
+        <img style="width: 100%;" src="/L2D/Material PNG/Logo/Logo ƯU đàm.png">
+    </div>
+    <div class="f-col-8">
+        <p class="f-p">LICENSE 2 DRAW - From 2014<br>Japan Media Festival Award Winner</p>
+    </div>
+</div>
+
+<script>
+    Vue.component("location-robot", {
+        props: ['location'],
+        template: `
+            <img class="f-img" :src="src">
+        `,
+        methods: {
+
+        },
+        data(){
+            return {
+                src: "/L2D/Material PNG/Location/",
+                type: "BLUE"
+            }
+        },
+        created(){
+            var param = Object.fromEntries(new URLSearchParams(location.search));
+            if(!param.location){
+                param.location = "HANOI";
+            }
+            if(this.$props.location == param.location){
+                this.type = "RED";    
+            } else {
+                this.type = "BLUE";
+            }
+            this.src += this.type + "-" + this.$props.location + ".png";
+        }
+    })
+    var appFooter = new Vue({
+        el: "#appFooter",
+        methods: {
+            openHref(url, bl){
+                if(bl){
+                    window.open(url);
+                } else {
+                    window.open(url, '_blank');
+                }
+            },
+        },
+        created(){
+
+        }
+    });
+</script>

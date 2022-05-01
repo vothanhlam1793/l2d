@@ -1,0 +1,49 @@
+const store = new Vuex.Store({
+    state: {
+        counter: 0
+    },
+    actions: {
+        up(context){
+            context.commit("up");
+        }
+    },
+    mutations: {
+        up(state){
+            state.counter += 1;
+        }
+    }
+})
+Vue.component("show", {
+    template: `
+        <div>{{counter}}</div>
+    `,
+    computed: {
+        counter(){
+            return this.$store.state.counter; 
+        }
+    }
+})
+
+Vue.component("btn-up", {
+    template: `
+        <div><button @click="up">UP</button></div>
+    `,
+    methods: {
+        up(){
+            this.$store.dispatch("up");
+        }
+    }
+})
+var app = new Vue({
+    el: "#app",
+    store,
+    data: {
+
+    },
+    methods: {
+
+    },
+    created(){
+        console.log("Hello From Vue");
+    }
+})

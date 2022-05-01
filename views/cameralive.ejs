@@ -1,0 +1,72 @@
+<div class="camera-live-area">
+    <!-- Camera live -->
+    <div class="camera-text">
+        <h4>CAMERA LIVE</h4>
+    </div>
+    <div id="queryZoom" class="camera-control-center">
+        <div class="camera-effect">
+            <img 
+                class="camera-effect-img l2d_left l2d_center"
+                src="/L2D/Material PNG/Cameralive/Arrow left.png"
+            >
+        </div>
+        <div class="camera-effect-center" @click="openZoom()">
+            <img 
+                class="camera-effect-img-center l2d_middle"
+                src="/L2D/Material PNG/Cameralive/Cameralive photo.png"
+            >
+        </div>
+        <div class="camera-effect">
+            <img 
+                class="camera-effect-img l2d_right l2d_center"
+                src="/L2D/Material PNG/Cameralive/Arrow right.png"
+            >
+        </div>
+    </div>
+</div>
+
+<script>
+            var appZoom = new Vue({
+                el: "#queryZoom",
+                data: {
+                    zoomLink: "",
+                    socket: ""
+                },
+                methods: {
+                    openZoom(){
+                        window.open(this.zoomLink, '_blank');
+                    },
+                    onopen: function(){
+                        // Goi de lay du lieu
+                        console.log("READY SOCKET - GET LINK")
+                        this.socket.send(JSON.stringify({
+                            type: "request"
+                        }))
+                    },
+                    onmessage: function(event){
+                        var data;
+                        var that = this;
+                        try {
+                            data = JSON.parse(event.data);
+                        } catch (e) {
+                            data = event.data;
+                        }
+                        // console.log(data);
+                        if(data.data){
+                            data.data.forEach(function(item){
+                                // console.log(item);
+                                if(item.title == "ZOOM"){
+                                    that.zoomLink = item.content;
+                                    that.socket.close();
+                                }
+                            })
+                        }
+                    }
+                },
+                created(){
+                    this.socket = new WebSocket("wss://camerangochoang.com:1880/getData");
+                    this.socket.onopen = this.onopen;
+                    this.socket.onmessage = this.onmessage;
+                }
+            })
+</script>
