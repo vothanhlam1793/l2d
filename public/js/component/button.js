@@ -30,6 +30,8 @@ Vue.component("button-control", {
             switch(state){
                 case "DOWN": {
                     wsin.send(this.index);
+                    geo_json = JSON.stringify(geo) ;
+                    wsout.send(geo_json);
                 } break;
                 case "UP": {
                     wsin.send(5);
@@ -40,31 +42,31 @@ Vue.component("button-control", {
             var ret = "l2d_style";
             switch(this.$props.index){
                 case "1": {
-                    ret += " l2d_top l2d_left";
+                    ret += " l2d_z l2d_top l2d_left";
                 } break;
                 case "2": {
-                    ret += " l2d_top l2d_middle";
+                    ret += " l2d_z l2d_top l2d_middle";
                 } break;
                 case "3": {
-                    ret += " l2d_top l2d_right";
+                    ret += " l2d_z l2d_top l2d_right";
                 } break;
                 case "4": {
-                    ret += " l2d_left l2d_center"
+                    ret += " l2d_z l2d_left l2d_center"
                 } break;
                 case "5": {
-                    ret += " l2d_middle l2d_center";
+                    ret += " l2d_middle l2d_center l2d_5";
                 } break;
                 case "6": {
-                    ret += " l2d_right l2d_center";
+                    ret += " l2d_z l2d_right l2d_center";
                 } break;
                 case "7": {
-                    ret += " l2d_left l2d_bottom";
+                    ret += " l2d_z l2d_left l2d_bottom";
                 } break;
                 case "8": {
-                    ret += " l2d_middle l2d_bottom";
+                    ret += " l2d_z l2d_middle l2d_bottom";
                 } break;
                 case "9": {
-                    ret += " l2d_bottom l2d_right";
+                    ret += " l2d_z l2d_bottom l2d_right";
                 } break;
             }
             return ret;
