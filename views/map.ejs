@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>License 2 Draw</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="/image/design/images/icon.png">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <link rel="stylesheet" type="text/css" href="/map/style.css" />
+    <script src="/map/index.js"></script>
+    <script src="/map/websocket-2.js"></script>
+    <style>
+        @font-face {
+            font-family: myFirstFont;
+            src: url("/image/design/fonts/Play-Regular.ttf");
+        }
+        @font-face {
+            font-family: myFirstFont;
+            src: url("/image/design/fonts/Play-Bold.ttf");
+            font-weight: bold;
+        }
+
+        div {
+        font-family: myFirstFont;
+        }
+
+        body {
+            background-image: url('/image/design/images/background.png');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+        .l2d_style {
+            display: inline-block;
+            height: 100%;
+            vertical-align: middle;
+        }
+        .controller-robot {
+            background-color: white;
+            margin: 10px;
+            /* display:block;
+            width: auto */
+            border-radius: 25px;
+            border: 5px solid #f51c40;
+            /* border: 3px solid #FF0000; */
+        }
+        .btn-l2d {
+            color: white;
+            background-color: blue;
+            font-size: 1.5em;
+        }
+        .btn-l2d-home {
+            color: white;
+            background-color: red;
+            font-size: 1.5em;
+        }
+    </style>
+  </head>
+  <body class="container-fluid">
+        <div>
+            <div class="row">
+                <div class="col">
+                    <img src="/image/design/images/title.png" class="mx-auto d-block" style="max-width: 40%;">
+                </div>
+            </div>   
+        </div>
+        <br>
+    <br>
+    <div style="height: 100vh">
+      <div class="" style="height: 55%">
+        <div id="map"></div>
+      </div>
+      <div class="" style="color: yellow; height: 3em">
+        <div class="text-center" class="">
+          <div id="citymove">
+          Hà Nội
+          </div>
+        </div>
+      </div>
+      <div class="" style="height: 20%; color: white">
+        <div class="m-3">
+          <div class="d-flex">
+            <div class="p-2 mr-auto">
+              <div class="pl-5 text-center">
+                <h5>CURRENT PLAYER</h5>
+                <h2 id="total">4951</h2>
+              </div>
+            </div>
+            <div class="p-2">
+              <div class="pr-5 text-center">
+                <h5>TOTAL PLAYER</h5>
+                <h2 id="contries">3</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAtG4ZFjHggg-AYuYCmInExbzFr73zoxG0&callback=initMap&v=monthly"
+      async
+    ></script>
+  </body>
+</html>

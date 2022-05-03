@@ -1,0 +1,65 @@
+<style>
+.main {
+    border: 1px solid black;
+    padding: 20px;
+    position: relative;
+    width: 100%;
+    height: 200px;
+    background-color: rgb(16, 202, 227);
+}
+
+.client {
+    /* border: 1px solid blue; */
+    position:absolute;
+    /* margin: 20px; */
+    font-size: 24px;
+    color: rgb(227, 16, 167);;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.frame {
+    /* border: 1px solid black; */
+    height: 2em;
+    /* width: 400px; */
+    float: left;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+var SPEED_D = 1000;
+var DIVF = 7;	
+function createFrame(name, timeout){
+	// var div = jQuery("<div class='client'></div>");
+	var text = jQuery("<h3 class='client' style='position:absolute'>" + name + "</h3>");
+	
+	var divFrame = jQuery("<div class='frame' style='width: " + (jQuery(".main").width() - 40)/(DIVF)+ "px'></div>");
+	divFrame.append(text);
+	jQuery(".main").append(divFrame);
+	text.animate({
+		left: "+=" + (divFrame.width()*2) + "px"
+	}, SPEED_D, function(){
+		text.animate({
+			left: "-=" + (divFrame.width()) + "px"
+		}, SPEED_D, function(){
+			text.hide();
+			divFrame.hide();
+		});
+	});
+	return divFrame;
+}
+function c10(name, n){
+	for(var i = 0; i < n; i++){
+		setTimeout(function(){
+			createFrame(name, i);
+		}, i*10);
+	}
+}
+</script>
+<div>
+    <div class="main"></div>
+</div>

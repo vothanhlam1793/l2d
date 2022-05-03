@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+        <link rel="icon" href="/image/design/images/icon.png">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vuex/2.5.0/vuex.js"></script>
+    </head>
+    <body>
+        <div id="appControl" class="container">
+            <div class="" v-if="auth">
+                <h2>UUDAM STUDIO - L2D - 2022</h2>
+                <p>EMASI Controller</p>
+                <br>
+                <table class="table table-bordered text-center">
+                    <tr>
+                        <td>Tên</td>
+                        <td>Điều khiển</td>
+                    </tr>
+                    <tr>
+                        <td>Xe 1</td>
+                        <td><device name="POWER1"></device></td>
+                    </tr>
+                    <tr>
+                        <td>Xe 2</td>
+                        <td><device name="POWER2"></device></td>
+                    </tr>
+                    <tr>
+                        <td>Led 1</td>
+                        <td><device name="POWER3"></device></td>
+                    </tr>
+                    <tr>
+                        <td>Led 2</td>
+                        <td><device name="POWER4"></device></td>
+                    </tr>
+                </table>
+                <div class="text-right mt-5">
+                    <p>Võ Thanh Lâm<br>0932 032 732</p>
+                </div>
+            </div>
+            <div class="text-center" v-else>
+                <h2>Yêu cầu mật khẩu</h2>
+                <br>
+                <input class="form-control" type="password" v-model="inpPwd" v-on:keyup.enter="btnCheck()">
+                <button class="btn btn-primary mt-3" @click="btnCheck()">Nhập</button>
+
+                <div class="alert aler-info">
+                    <p>{{notify}}</p>
+                </div>
+            </div>
+        </div>
+        <script src="/js/control/app.js"></script>
+    </body>
+</html>

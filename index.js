@@ -28,6 +28,14 @@ app.get('/css', (req, res) => {
   res.render("example");
 })
 
+app.get('/map', (req, res) => {
+  res.render("map");
+})
+
+app.get("/control", (req, res)=>{
+  res.render("control_device");
+})
+
 app.listen(port, () => {
   console.log(`Server ${process.env.APP_NAME || "Noname"} ${port}`)
 })

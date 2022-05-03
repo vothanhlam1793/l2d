@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script> 
+$(document).ready(function(){
+  $("#btnAddElemnt").click(addElement);
+});
+
+var counter = 0;
+function addElement(){
+	createFrame("Hồ Chí Minh");
+}
+var SPEED_D = 1000;
+var DIVF = 7;	
+function createFrame(name, timeout){
+	// var div = jQuery("<div class='client'></div>");
+	var text = jQuery("<h3 class='client' style='position:absolute'>" + name + "</h3>");
+	
+	var divFrame = jQuery("<div class='frame' style='width: " + (jQuery(".main").width() - 40)/(DIVF)+ "px'></div>");
+	divFrame.append(text);
+	jQuery(".main").append(divFrame);
+	text.animate({
+		left: "+=" + (divFrame.width()*2) + "px"
+	}, SPEED_D, function(){
+		text.animate({
+			left: "-=" + (divFrame.width()) + "px"
+		}, SPEED_D, function(){
+			text.hide();
+			divFrame.hide();
+		});
+	});
+	return divFrame;
+}
+function c10(name, n){
+	for(var i = 0; i < n; i++){
+		setTimeout(function(){
+			createFrame(name, i);
+		}, i*10);
+	}
+}
+
+function c1(name){
+	var text = jQuery("<h2 style='position:absolute'>" + name + "</h2>")
+	return text;
+}
+</script> 
+<link rel="stylesheet" href="/css/css.css">
+</head>
+<body>
+
+<button id="btnAddElemnt">Add Element</button>
+
+<div class="main">
+
+</div>
+
+</body>
+</html>

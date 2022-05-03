@@ -1,0 +1,96 @@
+/* @import url(http://fonts.googleapis.com/css?family=Lato:300); */
+/* @import url(http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css); */
+body
+{
+    margin: 0;
+    padding: 0;
+    font-family: 'Lato' , sans-serif;
+    color: #333;
+    background-size: 100%;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: none;
+    background-color: #e0e4eb;
+    
+}
+*{
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;	
+    touch-action: manipulation;
+}
+p
+{
+    margin: 0;
+    padding: 0 0 0px 0;
+    line-height: 20px;
+}
+.span4
+{
+    width: 80px;
+    /* float: left; */
+    margin: 5px 5px 5px 5px;
+    padding: 2 0 0 20 ;
+}
+
+.numpad {
+    /* display:inline-block; */
+    width: 300px;  
+    height: 300px;   
+    padding: 10px 0px 0px 10px; 
+    margin-left: -10px;
+    border: 0px solid #41864c;
+    background-color: rgb(156, 73, 73);
+}
+.numpad-in {
+    /* display:inline-block; */
+    width: 280px;  
+    height: 280px;       
+    /* border: 0px solid #41864c; */
+    background-color: rgb(18, 165, 165);
+    padding-top: 5px;
+    
+}
+
+
+.num
+{
+    
+
+    width: 80px;
+    border: 1px solid #9e9e9e;
+    -webkit-border-radius: 999px;
+    border-radius: 999px;
+    -moz-border-radius: 999px;
+    height: 80px;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+}
+.num:hover
+{
+    background-color: #a9e3e7;
+    color: #fff;
+    transition-property: background-color .2s linear 0s;
+    -moz-transition: background-color .2s linear 0s;
+    -webkit-transition: background-color .2s linear 0s;
+    -o-transition: background-color .2s linear 0s;
+}
+.txt
+{
+    font-size: 30px;
+    font-weight: bolder;
+    text-align: center;
+    margin-top: 20px;
+    font-family: 'Lato' , sans-serif;
+    line-height: 30px;
+    color: #333;
+   
+}
+.row {
+    margin-left: 5px;
+}
+
+
+
+
