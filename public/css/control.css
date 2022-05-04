@@ -1,3 +1,6 @@
+body {
+    background-color: black;
+}
 .clearfix::after {
     content: "";
     clear: both;
