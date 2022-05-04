@@ -111,7 +111,7 @@ var appControl = new Vue({
             if(this.pwd == this.inpPwd){
                 // Auth
                 this.auth = true;
-                localStorage.setItem("authControl", true)
+                localStorage.setItem("authControl", true);
             } else {
                 if(this.counter > 5){
                     this.notify = "A-hihi - bạn nhập sai nhiều lần rồi!. Có gì hãy liên hệ Lâm - 0932032732 nhé!.";

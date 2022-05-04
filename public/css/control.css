@@ -242,6 +242,10 @@
   width: 100%;  
 }
 
+
+.f-p {
+    font-size: 1em;
+}
 /* FOOTER-INFO */
 .footer-info {
     background-image: url("/L2D/Material PNG/Footer.png");
@@ -253,11 +257,11 @@
 }
 .f-col-4 {
     float: left;
-    width: calc(100%/3);
+    width: calc(100%/12*3);
 }
 .f-col-8 {
     float: left;
-    width: calc(100%/3*2);
+    width: calc(100%/12*9);
     font-family: Arial, Helvetica, sans-serif;
     font-size: 90%;
     margin: auto;
