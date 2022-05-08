@@ -22,7 +22,11 @@ app.use(bodyParser.json())
 
 app.get('/', (req, res) => {
   res.render("index");
-})
+});
+
+app.get('/:index', (req, res) => {
+  res.render("index");
+});
 
 app.get('/css', (req, res) => {
   res.render("example");
