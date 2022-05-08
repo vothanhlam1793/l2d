@@ -32,6 +32,10 @@ app.get('/map', (req, res) => {
   res.render("map");
 })
 
+app.get('/map/:version', (req, res) => {
+  res.render("map");
+})
+
 app.get("/control", (req, res)=>{
   res.render("control_device");
 })
