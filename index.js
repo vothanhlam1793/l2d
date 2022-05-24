@@ -24,6 +24,11 @@ app.get('/', (req, res) => {
   res.render("index");
 });
 
+app.get("/control", (req, res)=>{
+  console.log("control");
+  res.render("control_device");
+})
+
 app.get('/:index', (req, res) => {
   res.render("index");
 });
@@ -40,9 +45,6 @@ app.get('/map/:version', (req, res) => {
   res.render("map");
 })
 
-app.get("/control", (req, res)=>{
-  res.render("control_device");
-})
 
 app.listen(port, () => {
   console.log(`Server ${process.env.APP_NAME || "Noname"} ${port}`)
