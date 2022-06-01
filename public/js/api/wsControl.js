@@ -1,7 +1,13 @@
 var wsin;
 var wsout;
-var url_control = "ws://ws.uudamstudio.com:1880/wsbot3";
-var url_in = "ws://ws.uudamstudio.com:1880/wsbot2";
+if(!url_control){
+    var url_control = "ws://ws.uudamstudio.com:1880/wsbot3";
+}
+
+if(!url_in){
+    var url_in = "ws://ws.uudamstudio.com:1880/wsbot2";
+}
+
 function connect() {
     wsin = new WebSocket(url_control);
     wsin.onopen = function() {

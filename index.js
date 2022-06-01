@@ -29,9 +29,12 @@ app.get("/control", (req, res)=>{
   res.render("control_device");
 })
 
-app.get('/:index', (req, res) => {
-  res.render("index");
-});
+app.get("/l2d", function(req, res){
+  res.render("l2d", {
+    index: req.query.index,
+    bot: req.query.bot
+  });
+})
 
 app.get('/css', (req, res) => {
   res.render("example");
@@ -44,7 +47,9 @@ app.get('/map', (req, res) => {
 app.get('/map/:version', (req, res) => {
   res.render("map");
 })
-
+app.use(function(req, res, next){
+  res.render("index");
+});
 
 app.listen(port, () => {
   console.log(`Server ${process.env.APP_NAME || "Noname"} ${port}`)
