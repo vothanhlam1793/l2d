@@ -47,6 +47,19 @@ app.get('/map', (req, res) => {
 app.get('/map/:version', (req, res) => {
   res.render("map");
 })
+
+app.get("/draw", function(req, res){
+  res.render('draw', {
+    index: req.query.index || "draw3"
+  });
+});
+
+app.get("/drawv", function(req, res){
+  res.render('drawv', {
+    index: req.query.index || "draw3"
+  });
+});
+
 app.use(function(req, res, next){
   res.render("index");
 });

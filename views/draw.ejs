@@ -1,0 +1,554 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.02">
+        <style>
+            #sheet {
+                border:1px solid black;
+            }
+            .lock-screen {
+                height: 100%;
+                overflow: hidden;
+                width: 100%;
+                position: fixed;
+            }
+        </style>
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+    </head>
+    <body class="lock-screen">
+        <!-- <div>
+            Hello World
+            </div> -->
+            <div id="app">
+                <div class="text-center">
+                    <h2>Bàn vẽ lớn</h2>
+                </div>
+                <div>
+                    <p>W: {{width}} - H: {{height}}</p>
+                </div>
+                <div class="text-center">
+                    <canvas id="sheet" :width="width" :height="height"></canvas>
+                </div>
+                <div class="row p-3">
+                    <div class="col">
+                        <label>UP</label>
+                        <select class="form-control" v-model="up_ang" @change="change_pen()">
+                            <option v-for="i in 30" :value="i + 60">
+                                {{i + 60}}
+                            </option>
+                        </select>
+                    <!-- <input class="form-control" v-model="up_ang" @change="change_pen()"> -->
+                    </div>
+                    <div class="col">
+                        <label>DOWN</label>
+                        <select class="form-control" v-model="down_ang" @change="change_pen()">
+                            <option v-for="i in 30" :value="i + 60">
+                                {{i + 60}}
+                            </option>
+                        </select>
+                    <!-- <input class="form-control" v-model="down_ang" @change="change_pen()"> -->
+                    </div>
+
+
+                </div>
+                <div class="m-3">
+                    <div class="text-center">
+                    <button onclick="c(90, 90, PEN_UP_ANG); app.log('UP - PEN')" class="btn btn-warning">UP-PEN</button>
+                    <button onclick="c(90, 90, PEN_DOWN_ANG); app.log('DOWN - PEN')" class="btn btn-warning">DOWN-PEN</button>
+                    </div>
+                    <div class="text-center m-2">
+                    <button onclick="c(90, 90, 60); app.log('LEFT 90')" class="btn btn-secondary">LEFT-90</button> | 
+                    <button onclick="c(180, 90, 60); app.log('LEFT 180')" class="btn btn-success">LEFT-180</button>
+                    </div>
+                    <div class="text-center m-2">
+                    <button onclick="c(90, 0, 60); app.log('RIGHT 0')" class="btn btn-primary">RIGHT-0</button> | 
+                    <button onclick="c(90, 90, 60); app.log('RIGHT 90')" class="btn btn-secondary">RIGHT-90</button>
+</div>
+<div>
+    <p>LOGS: {{logs}}</p>
+</div>
+                </div>
+            </div>
+            <script>
+        var SET_NGUOC = true;
+         // Cai dat thong so ban
+        var _s  = 85;
+        var _a1 = 270;
+        var _a2 = 290;
+
+        // Cai dat goc nang but
+        var PEN_UP_ANG = localStorage.UP_ANG || 63;
+        var PEN_DOWN_ANG = localStorage.DOWN_ANG || 73;
+        
+        // dai nhat
+        var MAX_X = 400;
+        var MAX_Y = 300;
+
+        // Vi tri bat dau
+        var FROM_X = -100;
+        var FROM_Y = 160;
+        
+        
+        // Chia xuong bao nhieu don vi
+        var ROUND10 = 1;
+        var COUNTER_LINE = 0;
+
+        // chieu dai
+        var MAX = 50;
+        
+        var url_out = "ws://node.creta.work:1888/control/<%= index %>";
+        
+        var _support_vue = {
+                    methods: {
+                        numberWithCommas: function (x) {
+                            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        },
+                        isMobile() {
+                            if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                            return true
+                            } else {
+                            return false
+                            }
+                        }
+                    }
+                }
+                var app = new Vue({
+                    el: "#app",
+                    mixins: [_support_vue],
+                    data: {
+                        width: 500,
+                        height: 600,
+                        logs: "",
+                        sW: $(window).width(),
+                        sH: $(window).height(),
+                        up_ang: PEN_UP_ANG,
+                        down_ang: PEN_DOWN_ANG
+                    },
+                    methods: {
+                        log(a){
+                            this.logs = a;
+                        },
+                        change_pen(){
+                            console.log(this.up_ang, this.down_ang);
+                            localStorage.setItem("UP_ANG", this.up_ang);
+                            localStorage.setItem("DOWN_ANG", this.down_ang);
+                            PEN_UP_ANG = this.up_ang;
+                            PEN_DOWN_ANG = this.down_ang;
+                        }
+                    },
+                    created(){
+
+                    },
+                    mounted(){
+                        var e = 200;
+                        if(this.isMobile()){
+                            ROUND10 = Math.round(($(window).width() - 10) / MAX_X);
+                            if($(window).width() > MAX_X){
+                                e = MAX_X;
+                            } else {
+                                e = $(window).width() - 20;
+                            }
+                        } else {
+                            if($(window).height() > MAX_Y){
+                                e = MAX_Y;
+                            } else {
+                                e = $(window).height() - 20;
+                            }
+                        }
+                        this.width = e*ROUND10;
+                        this.height = e*ROUND10;
+                    }
+                })
+
+            </script>
+        <script>
+        "use strict";
+        function distance(x1, y1, x2, y2){
+            return Math.sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2) );
+        }
+        function calcDeg(_opp, _side1, _side2){
+            var temp = (_side1*_side1+_side2*_side2-_opp*_opp)/(2*_side1*_side2);
+            if(temp < -1){
+                temp = -1;
+            }
+            if(temp > 1) {
+                temp = 1;
+            }
+            return 180*Math.acos( temp )/Math.PI;
+        }
+        function XYtoAngle(x,y) {
+            var pY = y;
+            var pX = x;
+            var __d1 = distance(0,0,pX,pY);
+            var __d2 = distance(_s,0,pX,pY);
+            var leftAng = calcDeg(__d2,_s,__d1)+calcDeg(_a2,_a1,__d1);
+            var rightAng = 180-calcDeg(__d1,_s,__d2)-calcDeg(_a2,_a1,__d2);
+            if(SET_NGUOC) {
+                return {
+                    left:  Math.round(rightAng*10)/10 + 5,
+                    right: Math.round(leftAng*10)/10 - 5 ,
+                };;
+            } else {
+                return {
+                    left: Math.round(leftAng*10)/10 - 5 , 
+                    right: Math.round(rightAng*10)/10 + 5
+                };;
+            }
+        }
+
+        function c(a, b, c){
+            var r = b;
+            var l = a;
+            if(SET_NGUOC) {
+                r = a;
+                l = b;
+            }
+            var b = {
+                command: "move",
+                left: l,
+                right: r,
+                pen: c,
+                count: counterCommand++,
+            };
+            wsin.send(JSON.stringify(b))
+        }
+        var counterCommand = 0;
+        function getCommandDraw(lA, rA){
+            var r = rA;
+            var l = lA;
+            if(SET_NGUOC) {
+                r = lA;
+                l = rA;
+            }
+            return {
+                command: "move",
+                left: l,
+                right: r,
+                pen: PEN_DOWN_ANG,
+                count: counterCommand++,
+            }
+        }
+        function getCommandMove(lA, rA){
+            var r = rA;
+            var l = lA;
+            if(SET_NGUOC) {
+                r = lA;
+                l = rA;
+            }
+            return {
+                command: "move",
+                left: l,
+                right: r,
+                pen: PEN_UP_ANG,
+                count: counterCommand++,
+            }
+        }      
+
+        var context = document.getElementById('sheet').getContext("2d");
+        var canvas = document.getElementById('sheet');
+        context = canvas.getContext("2d");
+        context.strokeStyle = "#ff0000";
+        context.lineJoin = "round";
+        context.lineWidth = 0.5;
+
+        var clickX = [];
+        var clickY = [];
+        var clickDrag = [];
+        var paint;
+        function round10(x){
+            // return x;
+            return x - x%10;
+        }
+        var oX = 0;
+        var oY = 0;
+        var counter = MAX + 1;
+        var D_AGR = 1;
+        function checkOld(x,y){
+            var d = Math.sqrt((x-oX)*(x-oX) + (y-oY)*(y-oY));
+            if(d > D_AGR){
+                oX = x;
+                oY = y;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        
+        function FLIP_XY(X){
+            // return X;
+            return [MAX_X - X[0], X[1]];
+        }
+
+        function MAP_XY(X){
+            return [FROM_X + X[0], FROM_Y + X[1]];
+        }
+
+        // Lay toa do duong (1) -> (2)
+        var FIRST_DRAW = true;
+        function getDraw(i){
+            if((clickX[i] == undefined) || (clickX[i+1] == undefined)){
+                return null;
+            }
+
+            var A = MAP_XY(FLIP_XY([parseInt(clickX[i]/ROUND10), parseInt(clickY[i]/ROUND10)]));
+            var B = MAP_XY(FLIP_XY([parseInt(clickX[i+1]/ROUND10), parseInt(clickY[i+1]/ROUND10)]));
+            
+            var k = XYtoAngle(B[0], B[1]);
+            app.log(k, B);
+            if((clickDrag[i] == true) && (clickDrag[i+1]==true)){
+                if(FIRST_DRAW){
+                    var k = XYtoAngle(A[0], A[1]);
+                    return {
+                        command: "move",
+                        left: k.left,
+                        right: k.right,
+                        pen: PEN_UP_ANG,
+                        count: counterCommand++,
+                    }
+                }
+                return {
+                    command: "move",
+                    left: k.left,
+                    right: k.right,
+                    pen: PEN_DOWN_ANG,
+                    count: counterCommand++,
+                }
+            } else if((clickDrag[i] == true) && (clickDrag[i+1]==false)) {
+                return {
+                    command: "move",
+                    left: k.left,
+                    right: k.right,
+                    pen: PEN_UP_ANG,
+                    count: counterCommand++,
+                }
+            } else {
+                return null;
+            }
+        }
+
+        var COUNTER_SEND = 0;
+        var WAITING = false;
+        function sendDraw(){
+            setInterval(() => {
+                if(WAITING){
+                    return;
+                }
+                if(COUNTER_SEND < clickX.length - 2){
+                    if(getDraw(COUNTER_SEND) != null){
+                        var d = getDraw(COUNTER_SEND);
+                        if(FIRST_DRAW){
+                            FIRST_DRAW = false;
+                            COUNTER_SEND -= 1;
+                        }
+                        wsin.send(JSON.stringify(d));
+                        WAITING = true;
+                    }
+                    COUNTER_SEND += 1;
+                }
+            }, 20);
+        }
+        sendDraw();
+        /**
+         * Add information where the user clicked at.
+         * @param {number} x
+         * @param {number} y
+         * @return {boolean} dragging
+         */
+        function addClick(x, y, dragging) {
+            clickX.push(x);
+            clickY.push(y);
+            clickDrag.push(dragging);
+            // app.log(getDraw(clickX.length - 2));
+        }
+
+        /**
+         * Redraw the complete canvas.
+         */
+        function redraw() {
+            // Clears the canvas
+            context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+
+            for (var i = 0; i < clickX.length; i += 1) {
+                if (!clickDrag[i] && i == 0) {
+                    context.beginPath();
+                    context.moveTo(clickX[i], clickY[i]);
+                    context.stroke();
+                } else if (!clickDrag[i] && i > 0) {
+                    context.closePath();
+
+                    context.beginPath();
+                    context.moveTo(clickX[i], clickY[i]);
+                    context.stroke();
+                } else {
+                    context.lineTo(clickX[i], clickY[i]);
+                    context.stroke();
+                }
+            }
+        }
+
+        /**
+         * Draw the newly added point.
+         * @return {void}
+         */
+        function drawNew() {
+            var i = clickX.length - 1
+            if (!clickDrag[i]) {
+                if (clickX.length == 0) {
+                    context.beginPath();
+                    context.moveTo(clickX[i], clickY[i]);
+                    context.stroke();
+                } else {
+                    context.closePath();
+
+                    context.beginPath();
+                    context.moveTo(clickX[i], clickY[i]);
+                    context.stroke();
+                }
+            } else {
+                context.lineTo(clickX[i], clickY[i]);
+                context.stroke();
+            }
+        }
+
+        function mouseDownEventHandler(e) {
+            app.log("MOUSE DOWN");
+            paint = true;
+            var x = round10(e.pageX - canvas.offsetLeft);
+            var y = round10(e.pageY - canvas.offsetTop);
+            
+            if (paint) {
+                // app.log(x, y);
+                addClick(x, y, false);
+                drawNew();
+            }
+        }
+
+        function touchstartEventHandler(e) {
+            app.log("TOUCH START");
+            paint = true;
+            var x = round10(e.touches[0].pageX - canvas.offsetLeft);
+            var y = round10(e.touches[0].pageY - canvas.offsetTop);
+            if (paint) {
+                addClick(x, y, false);
+                drawNew();
+            }
+        }
+
+        function mouseUpEventHandler(e, n) {
+            if(n == 1){
+                app.log("MOUSE UP");
+            }
+            context.closePath();
+            paint = false;
+            redraw();
+        }
+
+        function mouseMoveEventHandler(e) {
+            app.log("MOUSE MOVE");
+            var x = round10(e.pageX - canvas.offsetLeft);
+            var y = round10(e.pageY - canvas.offsetTop);
+           
+            if (paint && checkOld(x,y)) {
+                // app.log(x, y);
+                addClick(x, y, true);
+                drawNew();
+            }
+        }
+
+        function touchMoveEventHandler(e) {
+            app.log("TOUCH MOVE");
+            var x = round10(e.touches[0].pageX - canvas.offsetLeft);
+            var y = round10(e.touches[0].pageY - canvas.offsetTop);
+            if (paint && checkOld(x,y)) {
+                // app.log(x, y);
+                addClick(x, y, true);
+                drawNew();
+            }
+        }
+
+        function touchEndEventHandler(e) {
+            app.log("TOUCH - END");
+            mouseUpEventHandler(e, 1);
+        }
+
+        function setUpHandler(isMouseandNotTouch, detectEvent) {
+            removeRaceHandlers();
+            if (isMouseandNotTouch) {
+                canvas.addEventListener('mouseup', mouseUpEventHandler);
+                canvas.addEventListener('mousemove', mouseMoveEventHandler);
+                canvas.addEventListener('mousedown', mouseDownEventHandler);
+                mouseDownEventHandler(detectEvent);
+            } else {
+                canvas.addEventListener('touchstart', touchstartEventHandler);
+                canvas.addEventListener('touchmove', touchMoveEventHandler);
+                canvas.addEventListener('touchend', touchEndEventHandler);
+                touchstartEventHandler(detectEvent);
+            }
+        }
+
+        function mouseWins(e) {
+            setUpHandler(true, e);
+        }
+
+        function touchWins(e) {
+            setUpHandler(false, e);
+        }
+
+        function removeRaceHandlers() {
+            canvas.removeEventListener('mousedown', mouseWins);
+            canvas.removeEventListener('touchstart', touchWins);
+        }
+
+        canvas.addEventListener('mousedown', mouseWins);
+        canvas.addEventListener('touchstart', touchWins);    
+
+        var wsin;
+        function connect() {
+                wsin = new WebSocket(url_out);
+                wsin.onopen = function() {
+                    $("#st2").text("Đã mở IN");
+                };
+
+                wsin.onmessage = function(e) {
+                    // app.log(e.data);
+                    // b = e.data.split()
+                    // console.log(e);
+                    var a = {}
+                    try {
+                        a = JSON.parse(e.data);
+                    } catch (e) {
+                        app.log(e);
+                    }
+                    if(a.status == "done"){
+                        // sendDraw();
+                        WAITING = false;
+                    }
+                    $("#status").text(e.data);
+                };
+
+                wsin.onclose = function(e) {
+                    app.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+                    setTimeout(function() {
+                        connect();
+                    }, 1000);
+                };
+
+                wsin.onerror = function(err) {
+                    app.log(err);
+                    console.error('Socket encountered error: ', err.message, 'Closing socket');
+                    wsin.close();
+                };
+                return wsin;
+            }
+            connect();
+        </script>
+    </body>
+</html>
