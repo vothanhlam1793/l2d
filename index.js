@@ -60,6 +60,10 @@ app.get("/drawv", function(req, res){
   });
 });
 
+app.get("/draw2", function(req, res){
+  res.render("draw2");
+});
+
 app.use(function(req, res, next){
   res.render("index");
 });
