@@ -54,6 +54,14 @@ app.get("/draw", function(req, res){
   });
 });
 
+app.get("/draw3", function(req, res){
+  res.render('draw3', {
+    index: req.query.index || "draw3",
+    up: req.query.up || 45,
+    down: req.query.down || 20
+  });
+});
+
 app.get("/drawv", function(req, res){
   res.render('drawv', {
     index: req.query.index || "draw3"

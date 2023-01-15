@@ -36,64 +36,98 @@
                 <div class="text-center">
                     <canvas id="sheet" :width="width" :height="height"></canvas>
                 </div>
-                <div class="row p-3">
-                    <div class="col">
-                        <label>UP</label>
-                        <select class="form-control" v-model="up_ang" @change="change_pen()">
-                            <option v-for="i in 180" :value="i + 0">
-                                {{i + hi0}}
-                            </option>
-                        </select>
-                    <!-- <input class="form-control" v-model="up_ang" @change="change_pen()"> -->
-                    </div>
-                    <div class="col">
-                        <label>DOWN</label>
-                        <select class="form-control" v-model="down_ang" @change="change_pen()">
-                            <option v-for="i in 180" :value="i + 0">
-                                {{i + 0}}
-                            </option>
-                        </select>
-                    <!-- <input class="form-control" v-model="down_ang" @change="change_pen()"> -->
-                    </div>
-
-
-                </div>
                 <div class="m-3">
                     <div class="text-center">
                     <button onclick="c(90, 90, PEN_UP_ANG); app.log('UP - PEN')" class="btn btn-warning">UP-PEN</button>
                     <button onclick="c(90, 90, PEN_DOWN_ANG); app.log('DOWN - PEN')" class="btn btn-warning">DOWN-PEN</button>
                     </div>
                     <div class="text-center m-2">
-                    <button onclick="c(90, 90, 60); app.log('LEFT 90')" class="btn btn-secondary">LEFT-90</button> | 
-                    <button onclick="c(180, 90, 60); app.log('LEFT 180')" class="btn btn-success">LEFT-180</button>
+                    <button onclick="c(90, 90, PEN_UP_ANG); app.log('LEFT 90')" class="btn btn-secondary">LEFT-90</button> | 
+                    <button onclick="c(180, 90, PEN_UP_ANG); app.log('LEFT 180')" class="btn btn-success">LEFT-180</button>
                     </div>
                     <div class="text-center m-2">
-                    <button onclick="c(90, 0, 60); app.log('RIGHT 0')" class="btn btn-primary">RIGHT-0</button> | 
-                    <button onclick="c(90, 90, 60); app.log('RIGHT 90')" class="btn btn-secondary">RIGHT-90</button>
+                    <button onclick="c(90, 0, PEN_UP_ANG); app.log('RIGHT 0')" class="btn btn-primary">RIGHT-0</button> | 
+                    <button onclick="c(90, 90, PEN_UP_ANG); app.log('RIGHT 90')" class="btn btn-secondary">RIGHT-90</button>
 </div>
 <div>
     <p>LOGS: {{logs}}</p>
 </div>
                 </div>
             </div>
-            <script>
+<script>
+        /*
+            Thay doi cach tinh toan do
+            A = [x, y]
+            => x = A[0]
+            => y = A[1]
+        */
+        
+
+        function tinh_do_dai_doan_thang(A, B){
+            var dis = Math.sqrt(Math.pow(A[0] - B[0], 2) + Math.pow(A[1] - B[1], 2));
+            return dis;
+        }
+
+        // Tra ve goc A
+        function goc_tam_giac(a, b, c){
+            var rad = Math.acos((Math.pow(b, 2) + Math.pow(c, 2) - Math.pow(a, 2))/(c*b*2));
+            return radian_to_degree(rad);
+        }
+
+        // Radian to Degree
+        function radian_to_degree(rad){
+            return rad*180/Math.PI;
+        }
+
+        // Settup
+        var _OFFSET_A1 = 100;
+        var _DIS = 76;
+        var _ARM_1 = 91;
+        var _ARM_2 = 127;
+
+        // Calculate auto
+        var A1 = [_OFFSET_A1, 0];
+        var A2 = [A1[0] + _DIS, 0]
+
+        function calc_angle(A){
+            // console.log(A);
+            var d1 = tinh_do_dai_doan_thang(A1, A);
+            var d2 = tinh_do_dai_doan_thang(A2, A);
+            var alpha_1 = goc_tam_giac(_ARM_2, _ARM_1, d1);
+            var alpha_2 = goc_tam_giac(d2, _DIS, d1);
+            var alpha_3 = goc_tam_giac(d1, _DIS, d2);
+            var alpha_4 = goc_tam_giac(_ARM_2, _ARM_1, d2);
+            var alpha_5 = goc_tam_giac(_ARM_1, _ARM_2, d1);
+            var alpha_6 = goc_tam_giac(_ARM_1, _ARM_2, d2);
+            var left = alpha_1 + alpha_2;
+            var right = 180 - (alpha_3 + alpha_4)
+            // console.log(d1, d2, alpha_1, alpha_2, alpha_3, alpha_4, left, right);
+            return {
+                right: left,
+                left: right,
+                alpha_5,
+                alpha_6,
+                alpha_7: 180 - (alpha_2 + alpha_3)
+            }
+        }
+
         var SET_NGUOC = true;
          // Cai dat thong so ban
-        var _s  = 85;
-        var _a1 = 270;
-        var _a2 = 290;
+        var _s  = 76;
+        var _a1 = 91;
+        var _a2 = 127;
 
         // Cai dat goc nang but
-        var PEN_UP_ANG = localStorage.UP_ANG || 63;
-        var PEN_DOWN_ANG = localStorage.DOWN_ANG || 73;
+        var PEN_UP_ANG = "<%= up %>";
+        var PEN_DOWN_ANG = "<%= down %>";
         
         // dai nhat
         var MAX_X = 400;
         var MAX_Y = 300;
 
         // Vi tri bat dau
-        var FROM_X = -100;
-        var FROM_Y = 160;
+        var FROM_X = 0;
+        var FROM_Y = 0;
         
         
         // Chia xuong bao nhieu don vi
@@ -203,6 +237,17 @@
             }
         }
 
+        function send_control_handle(left, right, pen, command = "move"){
+            var b = {
+                command: command,
+                left: left,
+                right: right,
+                pen: pen,
+                count: counterCommand++,
+            };
+            wsin.send(JSON.stringify(b))
+        }
+
         function c(a, b, c){
             var r = b;
             var l = a;
@@ -263,8 +308,8 @@
         var clickDrag = [];
         var paint;
         function round10(x){
-            // return x;
-            return x - x%10;
+            return x;
+            // return x - x%10;
         }
         var oX = 0;
         var oY = 0;
@@ -283,8 +328,8 @@
 
         
         function FLIP_XY(X){
-            // return X;
-            return [MAX_X - X[0], X[1]];
+            return X;
+            // return [MAX_X - X[0], X[1]];
         }
 
         function MAP_XY(X){
@@ -297,16 +342,16 @@
             if((clickX[i] == undefined) || (clickX[i+1] == undefined)){
                 return null;
             }
-
-            var A = MAP_XY(FLIP_XY([parseInt(clickX[i]/ROUND10), parseInt(clickY[i]/ROUND10)]));
-            var B = MAP_XY(FLIP_XY([parseInt(clickX[i+1]/ROUND10), parseInt(clickY[i+1]/ROUND10)]));
+            // var A = 
+            var A = MAP_XY(FLIP_XY([parseInt(clickX[i]), parseInt(clickY[i])]));
+            var B = MAP_XY(FLIP_XY([parseInt(clickX[i+1]), parseInt(clickY[i+1])]));
             
-            var k = XYtoAngle(B[0], B[1]);
+            var k = calc_angle(B);
             app.log(k, B);
-            console.log(counterCommand);
+            // console.log(counterCommand);
             if((clickDrag[i] == true) && (clickDrag[i+1]==true)){
                 if(FIRST_DRAW){
-                    var k = XYtoAngle(A[0], A[1]);
+                    var k = calc_angle(A);
                     return {
                         command: "move",
                         left: k.left,
@@ -345,7 +390,8 @@
                 }
                 if(COUNTER_SEND < clickX.length - 2){
                     var g_daw = getDraw(COUNTER_SEND);
-                    console.log(g_daw);
+                    // console.log(g_daw);
+                    // return;
                     if( g_daw != null){
                         var d = g_daw;
                         if(FIRST_DRAW){
@@ -367,10 +413,40 @@
          * @param {number} y
          * @return {boolean} dragging
          */
+        /*
+            Update - 
+        */
+        var _nan = false;
         function addClick(x, y, dragging) {
+            var deg = calc_angle([x, y])
+            // console.log((deg.alpha_5 + deg.alpha_6 + deg.alpha_7));
+            if(isNaN(deg.left) || isNaN(deg.right)){
+                _nan = true;
+                return;
+            } else if ((deg.left < 0) || (deg.left > 120)){
+                _nan = true;
+                return;
+            } else if ((deg.right < 60) || (deg.right > 180)){
+                _nan = true;
+                return;
+            } else if ((deg.alpha_5 + deg.alpha_6 + deg.alpha_7) > 180) {
+                // console.log("OVER")
+                _nan = true;
+                return;
+            } else {
+
+            }
+            var drag;
+            if(_nan){
+                drag = false;
+                _nan = false;
+            } else {
+                drag = dragging;
+            }
+            console.log(deg);
             clickX.push(x);
             clickY.push(y);
-            clickDrag.push(dragging);
+            clickDrag.push(drag);
             // app.log(getDraw(clickX.length - 2));
         }
 
@@ -525,14 +601,14 @@
                 wsin.onmessage = function(e) {
                     // app.log(e.data);
                     // b = e.data.split()
-                    console.log(e);
+                    // console.log(e);
                     var a = {}
                     try {
                         a = JSON.parse(e.data);
                     } catch (e) {
                         app.log(e);
                     }
-                    console.log(a);
+                    // console.log(a);
                     if(a.status == "done"){
                         // sendDraw();
                         WAITING = false;

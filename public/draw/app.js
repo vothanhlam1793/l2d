@@ -1,5 +1,51 @@
+var wsin;
+var WAITING = false;
+var url_out = "ws://node.creta.work:1888/control/draw3";
+        function connect() {
+                wsin = new WebSocket(url_out);
+                wsin.onopen = function() {
+                    // alert("Da mo cong");
+                    console.log("OPEN");
+                };
+
+                wsin.onmessage = function(e) {
+                    // app.log(e.data);
+                    // b = e.data.split()
+                    // console.log(e);
+                    var a = {}
+                    try {
+                        a = JSON.parse(e.data);
+                    } catch (e) {
+                        // app.log(e);
+                        console.log(e);
+                    }
+                    console.log(a);
+                    if(a.status == "done"){
+                        // sendDraw();
+                        WAITING = false;
+                        console.log("DONE", a);
+
+                    }
+                    // $("#status").text(e.data);
+                };
+
+                wsin.onclose = function(e) {
+                    app.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+                    setTimeout(function() {
+                        connect();
+                    }, 1000);
+                };
+
+                wsin.onerror = function(err) {
+                    app.log(err);
+                    console.error('Socket encountered error: ', err.message, 'Closing socket');
+                    wsin.close();
+                };
+                return wsin;
+}
+            connect();
 var width = window.innerWidth;
-      var height = window.innerHeight;
+var height = window.innerHeight;
 function degrees_to_radians(degrees) {
     return degrees * (Math.PI / 180);
 }
@@ -144,6 +190,37 @@ function transfer(deg){
 }
 
 
+class RobotDraw {
+    constructor(s1, s2, a){
+        this.armLeft = new TriangleArm(s1, s2, {
+            x: s1 + s2,
+            y: 0
+        }, "LEFT");
+        this.armLeft = new TriangleArm(s1, s2, {
+            x: s1 + s2 + a,
+            y: 0
+        }, "RIGHT");
+    }
+    getAngle(pA){
+        var that = this;
+        var B = that.armLeft.getB(pA);
+        var B1 = that.armRight.getB(pB);
+        if((B!= undefined) && (B1 != undefined)){
+            return {
+                left: transfer(Math.round(radians_to_degrees(Math.atan(hesogoc(that.armLeft.p1, B))))),
+                right: transfer(Math.round(radians_to_degrees(Math.atan(hesogoc(B1, that.armRight.p1))))),
+                B1: B,
+                B2: B1,
+                type: "FOUND"
+            }   
+        } else {
+            return {
+                type: "NOT_FOUND"
+            }
+        }
+    }
+}
+
 class DrawTable {
     constructor(){
 
@@ -155,13 +232,23 @@ class DrawModel {
 
     }
 }
-
+const _SCALE = 1.1;
+const _S1 = 274*_SCALE;
+const _S2 = 293*_SCALE;
+const _A = 85*_SCALE;
+const _PEN = {
+    UP: 63,
+    DOWN: 80
+}
+const _DIS = 30;
+var oldPoint = 0;
+var data = [];
 class DrawView {
     constructor(ctn){
         this.stage = new Konva.Stage({
             container: ctn,
-            width: width,
-            height: height,
+            width: (_S1 + _S2)*2 + _A,
+            height: _S1 + _S2,
         });
         this._init();
         this._arm();
@@ -169,12 +256,22 @@ class DrawView {
     }
     _init(){
         this.layer = new Konva.Layer({
-            // x: 100, y: 100
+            width: this.stage.width(),
+            height: this.stage.height(),
+            stroke: "black",
+            strokeWidth: 2,
+
         });
+        var background = new Konva.Rect({
+            fill: "#f0f0f0",
+            width: this.stage.width(),
+            height: this.stage.height()
+        })
+        this.layer.add(background);
         this.stage.add(this.layer);
     };
     _arm(){
-        this.armLeft = new TriangleArm(270, 290, {x: 410, y: 0}, "LEFT");
+        this.armLeft = new TriangleArm(_S1, _S2, {x: _S1 + _S2, y: 0}, "LEFT");
         this.armLeft.view = {};
         this.armLeft.view.p1 = new Konva.Circle({
             x: this.armLeft.p1.x,
@@ -187,8 +284,6 @@ class DrawView {
         this.layer.add(this.armLeft.view.p1);
         this.line = new Konva.Line({
             points: [this.armLeft.p1.x, this.armLeft.p1.y, 140, 23],
-            stroke: 'yellow',
-            strokeWidth: 2,
             lineCap: 'round',
             lineJoin: 'round',
         });
@@ -206,7 +301,7 @@ class DrawView {
             lineCap: 'round',
             lineJoin: 'round',
         });
-        this.armRight = new TriangleArm(270, 290, {x: 495, y: 0}, "RIGHT");
+        this.armRight = new TriangleArm(_S1, _S2, {x: _S1 + _S2 + _A, y: 0}, "RIGHT");
         this.armRight.view = {};
         this.armRight.view.p1 = new Konva.Circle({
             x: this.armRight.p1.x,
@@ -219,8 +314,8 @@ class DrawView {
         this.layer.add(this.armRight.view.p1);
         this.line3 = new Konva.Line({
             points: [this.armRight.p1.x, this.armRight.p1.y, 140, 23],
-            stroke: 'yellow',
-            strokeWidth: 2,
+            // stroke: 'yellow',
+            // strokeWidth: 2,
             lineCap: 'round',
             lineJoin: 'round',
         });
@@ -268,18 +363,34 @@ class DrawView {
     _inter(){
         var that = this;
         var stateMouse = 0;
-        this.stage.on("mousedown", function(){
+        this.stage.on("mousedown touchstart", function(){
             stateMouse = 1;
+            if(!that.lines){
+                that.lines = [];
+            }
+            that.lines.push(new Konva.Line({
+                points: [],
+                stroke: 'red',
+                strokeWidth: 2,
+                lineCap: 'round',
+                lineJoin: 'round',
+            }))
+            that.layer.add(that.lines[that.lines.length - 1]);
+            oldPoint = that.stage.getPointerPosition();
         })
-        this.stage.on("mousemove", function(){
+        this.stage.on("mousemove touchmove", function(){
             if(stateMouse == 1){
                 var mousePos = that.stage.getPointerPosition();
                 // console.log(mousePos);
             } else {
                 var mousePos = that.stage.getPointerPosition();
                 // console.log("NT", mousePos);
-                // return;
+                return;
             }
+            if(distance(mousePos, oldPoint) < _DIS){
+                return;
+            } 
+            oldPoint = mousePos;
             var B = that.armLeft.getB(mousePos);
             var B1 = that.armRight.getB(mousePos);
             if((B!= undefined) && (B1 != undefined)){
@@ -291,12 +402,26 @@ class DrawView {
                 that.line4.points([that.line3.points()[0], that.line3.points()[1], B1.x, B1.y]);
                 that.line5.points([B1.x, B1.y, mousePos.x, mousePos.y]);
 
-                that.line6.points(that.line6.points().concat([mousePos.x, mousePos.y]));
-                that.deg1.text(transfer(Math.round(radians_to_degrees(Math.atan(hesogoc(that.armLeft.p1, B))))));
-                that.deg2.text(transfer(Math.round(radians_to_degrees(Math.atan(hesogoc(B1, that.armRight.p1))))));    
+                // that.line6.points(that.line6.points().concat([mousePos.x, mousePos.y]));
+                var angle = {
+                    left: transfer(Math.round(radians_to_degrees(Math.atan(hesogoc(that.armLeft.p1, B))))),
+                    right: transfer(Math.round(radians_to_degrees(Math.atan(hesogoc(B1, that.armRight.p1)))))
+                }
+                if(that.lines[that.lines.length - 1].points().length != 0){
+                    angle.pen = _PEN.DOWN;
+                    angle.command = "move",
+                    data.push(angle);    
+                } else {
+                    angle.pen = _PEN.UP;
+                    angle.command = "move",
+                    data.push(angle);    
+                }
+                that.lines[that.lines.length - 1].points(that.lines[that.lines.length -1].points().concat([mousePos.x, mousePos.y]))
+                that.deg1.text(angle.left);
+                that.deg2.text(angle.right);
             }
         })
-        this.stage.on("mouseup", function(){
+        this.stage.on("mouseup touchend", function(){
             stateMouse = 0;
         })
 
@@ -311,3 +436,27 @@ class DrawController {
 }
 
 var app = new DrawController(new DrawModel(), new DrawView('container'));
+
+function sendDraw(){
+    setInterval(() => {
+        if(WAITING){
+            return;
+        }
+
+        for(var i = 0; i < data.length; i++){
+            var d = data[i];
+            // console.log(i);
+            if(d.status == "DONE"){
+                continue;
+            } else {
+                d.count = Math.round(Math.random()*1000000);
+                wsin.send(JSON.stringify(d));
+                WAITING = true;
+                d.status = "DONE";
+                return;
+            }
+            // console.log(i);
+        }
+    }, 20);
+}
+sendDraw();
