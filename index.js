@@ -61,6 +61,13 @@ app.get("/draw3", function(req, res){
     down: req.query.down || 20
   });
 });
+app.get("/draw4", function(req, res){
+  res.render('draw4', {
+    index: req.query.index || "draw3",
+    up: req.query.up || 45,
+    down: req.query.down || 20
+  });
+});
 
 app.get("/drawv", function(req, res){
   res.render('drawv', {

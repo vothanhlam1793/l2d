@@ -85,6 +85,7 @@
         var __Lx = 65;
         var __Ly = 120;
         var __scale = 5;
+        var __default = 65;
 
         // Settup
         var _OFFSET_A1 = 100;
@@ -164,8 +165,8 @@
                     el: "#app",
                     mixins: [_support_vue],
                     data: {
-                        width: 65,
-                        height: 120,
+                        width: __default*__scale,
+                        height: __default*__scale,
                         logs: "",
                         sW: $(window).width(),
                         sH: $(window).height(),
@@ -188,7 +189,6 @@
 
                     },
                     mounted(){
-                        // return
                         var e = 200;
                         if(this.isMobile()){
                             ROUND10 = Math.round(($(window).width() - 10) / MAX_X);
@@ -204,8 +204,9 @@
                                 e = $(window).height() - 20;
                             }
                         }
-                        this.width = e*ROUND10;
-                        this.height = e*ROUND10;
+                        __scale = e/__default;
+                        this.width = e;
+                        this.height = e;
                     }
                 })
 
@@ -426,8 +427,10 @@
         */
         var _nan = false;
         function addClick(x, y, dragging) {
-            var deg = calc_angle([x, y])
-            // console.log((deg.alpha_5 + deg.alpha_6 + deg.alpha_7));
+            console.log(x, y, __scale*__default);
+            var _sA = [x/__scale + __X, y/__scale + __Y];
+
+            var deg = calc_angle(_sA)
             if(isNaN(deg.left) || isNaN(deg.right)){
                 _nan = true;
                 return;
@@ -438,13 +441,15 @@
                 _nan = true;
                 return;
             } else if ((deg.alpha_5 + deg.alpha_6 + deg.alpha_7) > 180) {
-                // console.log("OVER")
+                _nan = true;
+                return;
+            } else if((x >= __scale * __default - 2) || (y >= __scale * __default - 2) || (x < 2) || (y < 2)){
+                console.log("OVER")
                 _nan = true;
                 return;
             } else {
 
             }
-            console.log("CALC-X: ", x, " = Y: ", y);
             var drag;
             if(_nan){
                 drag = false;
@@ -452,7 +457,7 @@
             } else {
                 drag = dragging;
             }
-            // console.log(deg);
+            console.log("L: ", deg.left, " - R: ", deg.right);
             clickX.push(x);
             clickY.push(y);
             clickDrag.push(drag);
