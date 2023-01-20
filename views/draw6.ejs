@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://unpkg.com/konva@^5/konva.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
+    <script src="https://unpkg.com/event-polyfill"></script>
+    <script src="/draw/arm.js"></script>
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+    <meta charset="UTF-8">  
+</head>
+<body class="lock-screen">
+  <div id="container"></div>
+  <br>
+  <input type="range" id="stroke-range" min="1" max="10" step="1" value="2">
+  <label for="stroke-range">Độ dày nét</label>
+  <input type="color" id="stroke-color" value="#000000">
+  <label for="stroke-color">Màu nét</label>
+  <button id="clear-btn">Clear</button>
+  <script>
+    // var  width = window.innerWidth - 15;
+    // var height = window.innerHeight - 100;
+    var width = 260;
+    var height = 80;
+
+    // create a new stage
+    var stage = new Konva.Stage({
+        container: 'container',
+        width: width,
+        height: height
+    });
+    
+    // create a new layer
+    var layer = new Konva.Layer();
+    stage.add(layer);
+
+    var rect = new Konva.Rect({
+        x: 0,
+        y: 0,
+        width: stage.width(),
+        height: stage.height(),
+        stroke: 'black',
+        strokeWidth: 2
+    });
+    layer.add(rect);
+    // update the width and height of rect
+    rect.width(stage.width());
+    rect.height(stage.height());
+
+    // create a new line
+    var line = new Konva.Line({
+      stroke: 'black',
+      strokeWidth: 2,
+      globalCompositeOperation: 'source-over'
+    });
+    // add the line to the layer
+    layer.add(line);
+
+    // get the stroke range and color input
+    var strokeRange = document.getElementById("stroke-range");
+    var strokeColor = document.getElementById("stroke-color");
+    
+    var statusCircle = new Konva.Circle({
+        x: 20,
+        y: 20,
+        radius: 10,
+        fill: 'gray'
+    });
+    layer.add(statusCircle);
+    stage.add(layer);
+
+    //create a websocket connection
+    var ws = new ReconnectingWebSocket('ws://node.creta.work:1888/control/draw3');
+
+    ws.onopen = function(event) {
+    // connection is open
+    };
+
+    ws.onclose = function(event) {
+    // try to reconnect in 5 seconds
+    };
+    // handle open event
+    ws.addEventListener('open', function(event) {
+        console.log('Connected to server');
+        statusCircle.fill('green');
+        layer.draw();
+    });
+
+    // handle close event
+    ws.addEventListener('close', function(event) {
+        console.log('Disconnected from server');
+        statusCircle.fill('gray');
+        layer.draw();
+    });
+
+    // handle error event
+    ws.addEventListener('error', function(event) {
+        console.log('Error:', event);
+        statusCircle.fill('red');
+        layer.draw();
+    });
+
+    var pos = {};
+    var lines = [];
+
+    var isMouseDown = false;
+    var currentLine;
+
+// handle mousedown event
+stage.on('mousedown', function(e) {
+  isMouseDown = true;
+  pos.x = e.evt.layerX;
+  pos.y = e.evt.layerY;
+  currentLine = new Konva.Line({
+    stroke: strokeColor.value,
+    strokeWidth: strokeRange.value,
+    globalCompositeOperation: 'source-over',
+    points: [pos.x, pos.y, pos.x, pos.y]
+  });
+  layer.add(currentLine);
+});
+
+// handle mousemove event
+stage.on('mousemove', function(e) {
+  if (isMouseDown) {
+    pos.x = e.evt.layerX;
+    pos.y = e.evt.layerY;
+    currentLine.points(currentLine.points().concat([pos.x, pos.y]));
+    layer.draw();
+    // console.log(pos);
+  }
+});
+    function endLine(){
+        isMouseDown = false;
+        lines.push(currentLine);
+        // send data to server
+        try {
+            var data = {
+                type: 'draw',
+                line: currentLine.toObject()
+            };
+            processDataAndSend(data);
+        } catch (e) {
+            console.log("Object Data: ", e);
+        }
+    }
+
+    // handle mouseup event
+    stage.on('mouseup', function(e) {
+        if(isMouseDown){
+            endLine();
+        }
+    });
+
+    layer.on('mouseleave', function(e) {
+        console.log("OUT");
+        if(isMouseDown){
+            endLine();
+        }
+    });
+
+    // Listen for touchstart event on the canvas
+    stage.on("touchstart", function(e) {
+    // Handle touchstart event
+        isMouseDown = true;
+        pos.x = e.evt.touches[0].clientX;
+        pos.y = e.evt.touches[0].clientY;
+        currentLine = new Konva.Line({
+            stroke: strokeColor.value,
+            strokeWidth: strokeRange.value,
+            globalCompositeOperation: 'source-over',
+            points: [pos.x, pos.y, pos.x, pos.y]
+        });
+        layer.add(currentLine);
+        // alert(pos);
+    });
+
+    // Listen for touchmove event on the canvas
+    stage.on("touchmove", function(e) {
+        // Handle touchmove event
+        e.evt.preventDefault();
+        if (isMouseDown) {
+            pos.x = e.evt.touches[0].clientX;
+            pos.y = e.evt.touches[0].clientY;
+            currentLine.points(currentLine.points().concat([pos.x, pos.y]));
+            layer.draw();
+            console.log(pos);
+            if((pos.x > stage.width()) || (pos.x < 0) || (pos.y < 0) || (pos.y > stage.height())){
+                endLine();
+            }
+        }    
+    });
+
+    // Listen for touchend event on the canvas
+    stage.on("touchend", function(evt) {
+        // Handle touchend event
+        endLine();
+    });
+    
+
+    var clearBtn = document.getElementById('clear-btn');
+    clearBtn.addEventListener('click', function() {
+        lines.forEach(function(line) {
+            try {
+                line.destroy();
+            } catch (e) {
+                console.log("Cannot delete line", e);
+            }
+        });
+        lines = [];
+        redrawLines();
+    });
+
+    // Ve cac doan
+    function redrawLines() {
+        lines.forEach(function(line) {
+            layer.add(line);
+        });
+        layer.draw();
+    }
+
+
+    // Var Point sendt
+    var sPoints = [];
+
+    // Create ARM
+    // Dis, A1, A2, Up, Down
+    var aRobot = new Arm(260, 140, 370, 40, 10);
+    aRobot.setOffsetPage(370 + 115, 370);
+    function processDataAndSend(data){
+        var line = [];
+        var points = [];
+        var moveLine = true;
+        for(var i = 0; i < data.line.attrs.points.length / 2; i++){
+            var ctrl = aRobot.getAngle([width - data.line.attrs.points[i*2], data.line.attrs.points[i*2+1]]);
+            if(isNaN(ctrl.left) || isNaN(ctrl.right)){
+                continue;
+            }
+            if(moveLine){
+                points.push(aRobot.getAngle([width - data.line.attrs.points[i*2], data.line.attrs.points[i*2+1]]));
+                points.push(ctrl);
+                moveLine = false;
+            } else {
+                points.push(ctrl);
+            }
+        }
+
+        /*
+            command: "move",
+            left: k.left,
+            right: k.right,
+            pen: PEN_UP_ANG,
+            count: counterCommand++,
+        */
+    //    console.log(points);
+        for(var j = 0; j < points.length; j ++){
+            // console.log(j);
+            if(j == 0){
+                points[j].pen = aRobot.upAngle;
+                points[j].count = Math.round(Math.random()*1000000);
+                points[j].command = "move";
+                // console.log(points[j], j);
+                continue;   
+            }
+            if(j == points.length - 1){
+                points[j].pen = aRobot.downAngle;
+                points[j].count = Math.round(Math.random()*1000000);
+                points[j].command = "draw";
+                // console.log(points[j], j);
+                continue;
+            }
+            points[j].pen = aRobot.downAngle;
+            points[j].count = Math.round(Math.random()*1000000);
+            points[j].command = "draw";
+            console.log(points[j], j);
+        }
+        // console.log(points);
+        points.push({
+            left: points[points.length - 1].left,
+            right: points[points.length - 1].right,
+            command: "draw",
+            pen: aRobot.upAngle,
+            count: Math.round(Math.random()*1000000)
+        })
+        // console.log(points);
+        sPoints = sPoints.concat(points);
+    }
+
+    var WAITING = false;
+    var COUNTER_SEND = 0;
+    function sendDraw(){
+            setInterval(() => {
+                // console.log("WAITING", WAITING);
+                if(WAITING){
+                    return;
+                }
+                console.log(COUNTER_SEND);
+                if(COUNTER_SEND < sPoints.length){
+                    ws.send(JSON.stringify(sPoints[COUNTER_SEND]));
+                    console.log(JSON.stringify(sPoints[COUNTER_SEND]), COUNTER_SEND);
+                    COUNTER_SEND ++;
+                    WAITING = true;
+                }
+            }, 20);
+        }
+        sendDraw();
+    
+    ws.onmessage = function(e) {
+                    // app.log(e.data);
+                    // b = e.data.split()
+                    // console.log(e);
+                    var a = {}
+                    try {
+                        a = JSON.parse(e.data);
+                    } catch (e) {
+                        console.log(e);
+                    }
+                    // console.log(a);
+                    if(a.status == "done"){
+                        // sendDraw();
+                        WAITING = false;
+                        console.log("DONE", a);
+                    }
+
+    };
+  </script>
+</body>
+</html>

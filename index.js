@@ -62,10 +62,11 @@ app.get("/draw3", function(req, res){
   });
 });
 app.get("/draw4", function(req, res){
-  res.render('draw4', {
+  var render = req.query.render || "/draw4";
+  res.render(render, {
     index: req.query.index || "draw3",
     up: req.query.up || 45,
-    down: req.query.down || 20
+    down: req.query.down || 20,
   });
 });
 
