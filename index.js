@@ -23,6 +23,9 @@ app.use(bodyParser.json())
 app.get('/', (req, res) => {
   res.render("index");
 });
+app.get("/janus", function(req,res){
+  res.render("janus");
+})
 
 app.get("/control", (req, res)=>{
   console.log("control");

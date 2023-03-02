@@ -29,6 +29,7 @@ Vue.component("button-control", {
         controlRobot(state){
             switch(state){
                 case "DOWN": {
+                    console.log("HERE", geo);
                     wsin.send(this.index);
                     geo_json = JSON.stringify(geo) ;
                     wsout.send(geo_json);

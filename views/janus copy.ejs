@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Janus WebRTC Echo Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/@peermesh/janus-adapter@latest/dist/adapter.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/janus-gateway-js@latest/dist/janus.min.js"></script>
+</head>
+<body>
+  <video id="myvideo" autoplay></video>
+  <script>
+    const janus = new Janus({
+      server: "http://your.janus.instance:8088/janus",
+      success: () => {
+        janus.attach({
+          plugin: "janus.plugin.echotest",
+          success: (pluginHandle) => {
+            const myvideo = document.getElementById("myvideo");
+            janus.attachMediaStream(myvideo, pluginHandle.stream);
+            janus.createOffer({
+              media: { audioSend: false, videoSend: true },
+              success: (jsep) => {
+                pluginHandle.send({ message: { request: "start" }, jsep });
+              }
+            });
+          },
+          error: (error) => {
+            console.error("Error attaching plugin:", error);
+          },
+          mediaState: (medium, on) => {
+            console.log(`Janus ${on ? "started" : "stopped"} receiving our ${medium}`);
+          },
+          webrtcState: (on) => {
+            console.log(`Janus says our WebRTC PeerConnection is ${on ? "up" : "down"} now`);
+          },
+          onmessage: (msg, jsep) => {
+            console.log("Message from Janus:", msg);
+            if (jsep) {
+              janus.handleRemoteJsep({ jsep });
+            }
+          },
+          onlocalstream: (stream) => {
+            console.log("Got local stream", stream);
+          },
+          onremotestream: (stream) => {
+            console.log("got remote stream", stream);
+          }
+        });
+      },
+      error: (error) => {
+        console.error("Error connecting to Janus:", error);
+      },
+      destroyed: () => {
+        console.log("Connection to Janus destroyed");
+      }
+    });
+  </script>
+</body>
+</html>

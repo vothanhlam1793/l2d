@@ -5,11 +5,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
     <script src="https://unpkg.com/event-polyfill"></script>
-    <script src="/draw/arm.js"></script>
+    <script src="/draw/arma.js"></script>
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
     <meta charset="UTF-8">  
 </head>
-<body class="lock-screen">
+<body class="">
   <div id="container"></div>
   <br>
   <input type="range" id="stroke-range" min="1" max="10" step="1" value="1">
@@ -20,8 +20,8 @@
   <script>
     // var  width = window.innerWidth - 15;
     // var height = window.innerHeight - 100;
-    var width = 150;
-    var height = 150;
+    var width = 210;
+    var height = 290;
 
     // create a new stage
     var stage = new Konva.Stage({
@@ -229,7 +229,7 @@ stage.on('mousemove', function(e) {
 
     // Create ARM
     // Dis, A1, A2, Up, Down
-    var aRobot = new Arm(76, 91, 127, 40, 0);
+    var aRobot = new Arm(250, 200 + 40, 170 + 52, <%= up %>, <%= down %>);
     aRobot.setOffsetPage(127,127);
     function processDataAndSend(data){
         var line = [];
@@ -373,17 +373,17 @@ stage.on('mousemove', function(e) {
         // ret.push(A);
 
         // // Giai thuat tinh khoang cach
-        // var diffLeft = B.left - A.left;
-        // var diffRight = B.right - A.right;
-        // var MAX_ANGLE = 0.5;
-        // var maxAngel = Math.max(Math.abs(diffLeft), Math.abs(diffRight));
-        // var step = maxAngel/MAX_ANGLE;
-        // for(var j = 1; j < step - 1; j++){
-        //     ret.push({
-        //         left: A.left + j*diffLeft/step,
-        //         right: A.right + j*diffRight/step
-        //     });
-        // }
+        var diffLeft = B.left - A.left;
+        var diffRight = B.right - A.right;
+        var MAX_ANGLE = 0.6;
+        var maxAngel = Math.max(Math.abs(diffLeft), Math.abs(diffRight));
+        var step = maxAngel/MAX_ANGLE;
+        for(var j = 1; j < step - 1; j++){
+            ret.push({
+                left: A.left + j*diffLeft/step,
+                right: A.right + j*diffRight/step
+            });
+        }
         ret.push(B);
         return ret;
     }

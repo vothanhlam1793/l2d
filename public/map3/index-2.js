@@ -21,7 +21,7 @@ function addMarker(position, title) {
     const marker = new google.maps.Marker({
         position,
         map,
-        icon: "http://l2d.uudamstudio.com/design/images/logo64.png",
+        icon: "/image/design/images/logo64.png",
         // icon: "http://maps.google.com/mapfiles/kml/paddle/red-stars.png",
         animation: google.maps.Animation.DROP,
     });
@@ -74,14 +74,14 @@ function setCityMove(city){
     console.log(city);
     // Not them nè 2022
 
-    // var a = jQuery("#citymove");
-    // a.animate({fontSize: '1em'}, "fast");
-    // clearTimeout(sct);
-    // a.text(city);
-    // a.animate({fontSize: '3em'}, "fast");
-    // sct = setTimeout(function(){
-    //     a.animate({fontSize: '1em'});
-    // }, 1000);
+    var a = jQuery("#citymove");
+    a.animate({fontSize: '1em'}, "fast");
+    clearTimeout(sct);
+    a.text(city);
+    a.animate({fontSize: '3em'}, "fast");
+    sct = setTimeout(function(){
+        a.animate({fontSize: '1em'});
+    }, 1000);
     arrayCity.push(city);
 };
 setInterval(function(){

@@ -6,6 +6,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
     <script src="https://unpkg.com/event-polyfill"></script>
     <script src="/draw/arm.js"></script>
+    <script src="/js/api/wsGeo.js"></script>
+    <script src="http://www.geoplugin.net/json.gp?jsoncallback=getGeo"></script>
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
     <meta charset="UTF-8">  
 </head>
@@ -71,6 +73,32 @@
 
     //create a websocket connection
     var ws = new ReconnectingWebSocket('ws://node.creta.work:1888/control/<%= index %>');
+    var wsgeo = new ReconnectingWebSocket("ws://ws.uudamstudio.com:1880/wsbot2");
+
+    wsgeo.onopen = function(event) {
+    // connection is open
+    };
+
+    wsgeo.onclose = function(event) {
+    // try to reconnect in 5 seconds
+    };
+    // handle open event
+    wsgeo.addEventListener('open', function(event) {
+        console.log('Connected to server');
+        statusCircle.fill('green');
+    });
+
+    // handle close event
+    wsgeo.addEventListener('close', function(event) {
+        console.log('Disconnected from server');
+        statusCircle.fill('gray');
+    });
+
+    // handle error event
+    wsgeo.addEventListener('error', function(event) {
+        console.log('Error:', event);
+        statusCircle.fill('red');
+    });
 
     ws.onopen = function(event) {
     // connection is open
@@ -311,7 +339,7 @@ stage.on('mousemove', function(e) {
     var COUNTER_SEND = 0;
     function sendDraw(){
             setInterval(() => {
-                // console.log("WAITING", WAITING);
+                console.log("WAITING", WAITING);
                 if(WAITING){
                     return;
                 }
@@ -319,6 +347,10 @@ stage.on('mousemove', function(e) {
                     ws.send(JSON.stringify(sPoints[COUNTER_SEND]));
                     COUNTER_SEND ++;
                     WAITING = true;
+                            // Send GEO
+                        geo_json = JSON.stringify(geo) ;
+                        console.log(geo_json);
+                        wsgeo.send(geo_json);
                 }
             }, 20);
         }

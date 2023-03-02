@@ -1,0 +1,77 @@
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/@npafit01/janus-js@1.0.24/src/janus.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/6.1.4/adapter.js"></script>
+    <script>
+      // Khởi tạo kết nối đến trạm chủ Janus
+      const server = "ws://103.195.236.19:8188/";
+      let janus = null;
+      let streaming = null;
+      Janus.init({debug: "all", callback: function() { 
+        connect();
+      } });
+
+      // Hàm kết nối đến trạm chủ Janus
+      function connect() {
+        janus = new Janus({
+          server: server,
+          success: function() {
+            // Thành công, tiếp tục bước tiếp theo
+            janus.attach({
+              plugin: "janus.plugin.streaming",
+              success: function(pluginHandle) {
+                const myvideo = document.getElementById("myvideo");
+                console.log(pluginHandle);
+                // Negotiate WebRTC
+                echotest = pluginHandle;
+                        var body = { "audio": true, "video": true };
+                        echotest.send({"message": body});
+                        echotest.createOffer(
+                                {
+                                        // No media property provided: by default,
+                                                // it's sendrecv for audio and video
+                                        success: function(jsep) {
+                                                // Got our SDP! Send our OFFER to the plugin
+                                                echotest.send({"message": body, "jsep": jsep});
+                                        },
+                                        error: function(error) {
+                                                // An error occurred...
+                                        },
+                                        customizeSdp: function(jsep) {
+                                                // if you want to modify the original sdp, do as the following
+                                                // oldSdp = jsep.sdp;
+                                                // jsep.sdp = yourNewSdp;
+                                        }
+                                });
+                // Thành công, lưu lại handle của plugin
+                streaming = pluginHandle;
+                // Tiếp tục tùy chọn thao tác với plugin
+                console.log("KHOI TAO THANH CONG");
+
+                },
+              error: function(error) {
+                console.error("Error attaching plugin:", error);
+              },
+              onmessage: function(msg, jsep) {
+                // Xử lý các tin nhắn đến từ plugin
+              },
+              webrtcState: function(on) {
+                console.log("Janus says our WebRTC PeerConnection is " + (on ? "up" : "down") + " now");
+              }
+            });
+          },
+          error: function(error) {
+            console.error("Error connecting to server:", error);
+          },
+          destroyed: function() {
+            console.warn("Connection to server destroyed");
+          }
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <!-- Các thành phần giao diện của trang web -->
+    <video id="myvideo" autoplay></video>
+  </body>
+</html>
