@@ -27,11 +27,12 @@ Vue.component("button-control", {
             this.controlRobot(state);
         },
         controlRobot(state){
+            console.log("STATE: ", state, this.index);
             switch(state){
                 case "DOWN": {
                     console.log("HERE", geo);
                     wsin.send(this.index);
-                    geo_json = JSON.stringify(geo) ;
+                    geo_json = JSON.stringify(geo);
                     wsout.send(geo_json);
                 } break;
                 case "UP": {

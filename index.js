@@ -34,8 +34,8 @@ app.get("/control", (req, res)=>{
 
 app.get("/l2d", function(req, res){
   res.render("l2d", {
-    index: req.query.index,
-    bot: req.query.bot
+    bot: req.query.bot,
+    map: req.query.map
   });
 })
 
@@ -57,6 +57,12 @@ app.get("/draw", function(req, res){
   });
 });
 
+app.get("/lz", function(req, res){
+  res.render('lz', {
+    index: req.query.index || "draw3"
+  });
+});
+
 app.get("/draw3", function(req, res){
   res.render('draw3', {
     index: req.query.index || "draw3",
@@ -65,7 +71,7 @@ app.get("/draw3", function(req, res){
   });
 });
 app.get("/draw4", function(req, res){
-  var render = req.query.render || "/draw4";
+  var render = req.query.index || "/draw4";
   res.render(render, {
     index: req.query.index || "draw3",
     up: req.query.up || 45,
@@ -84,6 +90,7 @@ app.get("/draw2", function(req, res){
 });
 
 app.use(function(req, res, next){
+  console.log("NEX")
   res.render("index");
 });
 

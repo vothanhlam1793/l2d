@@ -1,11 +1,13 @@
 var wsin;
 var wsout;
+// Danh cho bang do map
 if(!url_control){
-    var url_control = "ws://ws.uudamstudio.com:1880/wsbot3";
+    var url_control = "ws://svr3.creta.vn:1888/web001";
 }
 
+// Danh cho xe
 if(!url_in){
-    var url_in = "ws://ws.uudamstudio.com:1880/wsbot2";
+    var url_in = "ws://svr3.creta.vn:1888/map001";
 }
 
 function connect() {
