@@ -1,4 +1,4 @@
-let socket = new WebSocket("ws://ws.uudamstudio.com:1880/map");
+let socket = new WebSocket("ws://svr3.creta.vn:1888/mapr001");
 
 socket.onopen = function(e) {
   console.log("[open] Connection established");
@@ -32,7 +32,7 @@ socket.onerror = function(error) {
   console.log(`[error] ${error.message}`);
 };
 
-let sTotal = new WebSocket("ws://ws.uudamstudio.com:1880/total");
+let sTotal = new WebSocket("ws://svr3.creta.vn:1888/maptotal");
 
 sTotal.onopen = function(e) {
   console.log("[open] Connection established");
@@ -48,12 +48,12 @@ sTotal.onmessage = function(event) {
         console.log(e);
     }
     console.log(data);
-    var total = data.reduce(function(t, e){
-      return {
-        total: t.total + e.total
-      }
-    })
-    setTotal(total.total);
+    // var total = data.reduce(function(t, e){
+    //   return {
+    //     total: t.total + e.total
+    //   }
+    // })
+    setTotal(data.total);
     setContries(data.length);
 }
 
