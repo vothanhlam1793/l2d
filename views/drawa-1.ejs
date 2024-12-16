@@ -17,6 +17,21 @@
   <input type="color" id="stroke-color" value="#000000">
   <label for="stroke-color">Màu nét</label>
   <button id="clear-btn">Clear</button>
+  <!-- <input type="number" id="upInput" min="0">
+    <button onclick="updateUrl()">Cập nhật URL</button> -->
+  <div id="result"></div>
+    <script>
+        function updateUrl() {
+            // Lấy giá trị từ trường input
+            var upValue = document.getElementById("upInput").value;
+
+            // Tạo URL mới với giá trị up cập nhật
+            var url = "http://localhost:8080/draw4/?index=draw3&up=" + encodeURIComponent(upValue) + "&down=0&render=drawa-1";
+
+            // Chuyển hướng đến URL mới
+            window.location.href = url;
+        }
+    </script>
   <script>
     // var  width = window.innerWidth - 15;
     // var height = window.innerHeight - 100;
@@ -70,7 +85,7 @@
     stage.add(layer);
 
     //create a websocket connection
-    var ws = new ReconnectingWebSocket('ws://node.creta.work:1888/control/<%= index %>');
+    var ws = new ReconnectingWebSocket('ws://svr3.creta.vn:1888/control/<%= index %>');
 
     ws.onopen = function(event) {
     // connection is open

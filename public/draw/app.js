@@ -1,6 +1,6 @@
 var wsin;
 var WAITING = false;
-var url_out = "ws://node.creta.work:1888/control/draw3";
+var url_out = "ws://svr3.creta.vn:1888/control/draw3";
         function connect() {
                 wsin = new WebSocket(url_out);
                 wsin.onopen = function() {

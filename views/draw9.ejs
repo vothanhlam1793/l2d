@@ -12,6 +12,7 @@
     <meta charset="UTF-8">  
 </head>
 <body class="lock-screen">
+    <h1>DRAW 9</h1>
   <div id="container"></div>
   <br>
   <input type="range" id="stroke-range" min="1" max="10" step="1" value="2">
@@ -72,8 +73,8 @@
     stage.add(layer);
 
     //create a websocket connection
-    var ws = new ReconnectingWebSocket('ws://node.creta.work:1888/control/<%= index %>');
-    var wsgeo = new ReconnectingWebSocket("ws://ws.uudamstudio.com:1880/wsbot2");
+    var ws = new ReconnectingWebSocket('ws://svr3.creta.vn:1888/control/<%= index %>');
+    var wsgeo = new ReconnectingWebSocket("ws://svr3.creta.vn:1888/map001");
 
     wsgeo.onopen = function(event) {
     // connection is open
@@ -259,8 +260,8 @@ stage.on('mousemove', function(e) {
 
     // Create ARM
     // Dis, A1, A2, Up, Down
-    var aRobot = new Arm(260, 140, 370, 40, 10);
-    aRobot.setOffsetPage(370 + 115, 370);
+    var aRobot = new Arm(75, 100, 160, 40, 0);
+    aRobot.setOffsetPage(160 + 40, 160);
     function processDataAndSend(data){
         var line = [];
         var points = [];
@@ -339,11 +340,12 @@ stage.on('mousemove', function(e) {
     var COUNTER_SEND = 0;
     function sendDraw(){
             setInterval(() => {
-                console.log("WAITING", WAITING);
+                console.log("WAITING", WAITING, COUNTER_SEND, sPoints);
                 if(WAITING){
                     return;
                 }
                 if(COUNTER_SEND < sPoints.length){
+
                     ws.send(JSON.stringify(sPoints[COUNTER_SEND]));
                     COUNTER_SEND ++;
                     WAITING = true;

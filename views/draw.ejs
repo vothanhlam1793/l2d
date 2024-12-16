@@ -41,7 +41,7 @@
                         <label>UP</label>
                         <select class="form-control" v-model="up_ang" @change="change_pen()">
                             <option v-for="i in 180" :value="i + 0">
-                                {{i + hi0}}
+                                {{i + 0}}
                             </option>
                         </select>
                     <!-- <input class="form-control" v-model="up_ang" @change="change_pen()"> -->
@@ -103,7 +103,7 @@
         // chieu dai
         var MAX = 50;
         
-        var url_out = "ws://node.creta.work:1888/control/<%= index %>";
+        var url_out = "ws://svr3.creta.vn:1888/control/<%= index %>";
         
         var _support_vue = {
                     methods: {
