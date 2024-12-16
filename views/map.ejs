@@ -2,76 +2,88 @@
 <html>
   <head>
     <title>License 2 Draw</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="/image/design/images/icon.png">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/image/design/images/icon.png" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+      crossorigin="anonymous"
+    />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?version=4.8.0"></script>
     <link rel="stylesheet" type="text/css" href="/map3/style.css" />
     <script src="/map3/index-2.js"></script>
     <script src="/map3/websocket-2.js"></script>
     <style>
-        @font-face {
-            font-family: myFirstFont;
-            src: url("/image/design/fonts/Play-Regular.ttf");
-        }
-        @font-face {
-            font-family: myFirstFont;
-            src: url("/image/design/fonts/Play-Bold.ttf");
-            font-weight: bold;
-        }
-
-        div {
+      @font-face {
         font-family: myFirstFont;
-        }
+        src: url('/image/design/fonts/Play-Regular.ttf');
+      }
+      @font-face {
+        font-family: myFirstFont;
+        src: url('/image/design/fonts/Play-Bold.ttf');
+        font-weight: bold;
+      }
 
-        body {
-            background-image: url('/image/design/images/background.png');
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-size: cover;
-        }
-        .l2d_style {
-            display: inline-block;
-            height: 100%;
-            vertical-align: middle;
-        }
-        .controller-robot {
-            background-color: white;
-            margin: 10px;
-            /* display:block;
+      div {
+        font-family: myFirstFont;
+      }
+
+      body {
+        background-image: url('/image/design/images/background.png');
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+      }
+      .l2d_style {
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+      }
+      .controller-robot {
+        background-color: white;
+        margin: 10px;
+        /* display:block;
             width: auto */
-            border-radius: 25px;
-            border: 5px solid #f51c40;
-            /* border: 3px solid #FF0000; */
-        }
-        .btn-l2d {
-            color: white;
-            background-color: blue;
-            font-size: 1.5em;
-        }
-        .btn-l2d-home {
-            color: white;
-            background-color: red;
-            font-size: 1.5em;
-        }
+        border-radius: 25px;
+        border: 5px solid #f51c40;
+        /* border: 3px solid #FF0000; */
+      }
+      .btn-l2d {
+        color: white;
+        background-color: blue;
+        font-size: 1.5em;
+      }
+      .btn-l2d-home {
+        color: white;
+        background-color: red;
+        font-size: 1.5em;
+      }
     </style>
   </head>
   <body class="container-fluid">
-        <div>
-            <div class="row">
-                <div class="col">
-                    <img src="/image/design/images/title.png" class="mx-auto d-block" style="max-width: 40%;">
-                </div>
-            </div>   
+    <div>
+      <div class="row">
+        <div class="col">
+          <img
+            src="/image/design/images/title.png"
+            class="mx-auto d-block"
+            style="max-width: 40%"
+          />
         </div>
-        <br>
-    <br>
+      </div>
+    </div>
+    <br />
+    <br />
     <div style="height: 100vh">
       <div class="" style="height: 55%">
         <div id="map"></div>
@@ -83,9 +95,7 @@
           </div>
         </div> -->
       </div>
-      <div>
-        <%- include("effect.ejs"); %>
-      </div>
+      <div><%- include("effect.ejs"); %></div>
       <div class="" style="height: 20%; color: white">
         <div class="m-3">
           <div class="d-flex">
@@ -106,7 +116,7 @@
       </div>
     </div>
     <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCEraS28xPDy0-g4sYoROKHAMGFmsiwsFo&callback=initMap&v=monthly"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDAkm2NQMyQRdnHRG1Pf89QvRrVU2GkVfc&callback=initMap&v=monthly"
       async
     ></script>
   </body>
