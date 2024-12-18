@@ -70,13 +70,21 @@ app.get('/draw3', function (req, res) {
   })
 })
 app.get('/draw4', function (req, res) {
-  var render = req.query.render || '/draw4'
+  var render = req.query.render || 'draw4'
   console.log('READER:', render)
   res.render(render, {
     index: req.query.index || 'draw3',
     up: req.query.up || 45,
     down: req.query.down || 20
   })
+})
+
+app.get('/lazer', function (req, res) {
+  res.render('lazer')
+})
+
+app.get('/scul', function (req, res) {
+  res.render('scul')
 })
 
 app.get('/drawv', function (req, res) {

@@ -1,111 +1,117 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"></script>
     <script src="https://unpkg.com/event-polyfill"></script>
     <script src="/js/api/wsGeo.js"></script>
     <script src="http://www.geoplugin.net/json.gp?jsoncallback=getGeo"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+    />
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vuex/2.5.0/vuex.js"></script>
     <style>
-    .yellow-button {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: #fff;
-    border: none;
-    box-shadow: 0 0 0 3px #fcd200;
-    outline: none;
-    }
+      .yellow-button {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #fff;
+        border: none;
+        box-shadow: 0 0 0 3px #fcd200;
+        outline: none;
+      }
 
-    .yellow-button:active {
-    background-color: #fcd200;
-    }
-
-    
+      .yellow-button:active {
+        background-color: #fcd200;
+      }
     </style>
-</head>
-<body class="lock-screen">
-
+  </head>
+  <body class="lock-screen">
     <div class="container mt-5">
-        <div class="text-center">
-            <h1>Sculpture</h1>
-        </div>
-        <div class="text-center my-5">
-            <button class="btn btn-primary btn-lg" onclick="control(0)">1</button>
-        </div>
-        <div class="text-center my-5">
-            <button class="btn btn-success btn-lg" onclick="control(1)">2</button>
-        </div>
-        <div class="text-center my-5">
-            <button class="btn btn-warning btn-lg" onclick="control(2)">3</button>
-        </div>
+      <div class="text-center">
+        <h1>Sculpture</h1>
+      </div>
+      <div class="text-center my-5">
+        <button class="btn btn-primary btn-lg" onclick="control(0)">1</button>
+      </div>
+      <div class="text-center my-5">
+        <button class="btn btn-success btn-lg" onclick="control(1)">2</button>
+      </div>
+      <div class="text-center my-5">
+        <button class="btn btn-warning btn-lg" onclick="control(2)">3</button>
+      </div>
     </div>
-  <script>
-    // var ws = new ReconnectingWebSocket('ws://node.creta.work:1888/control/<%= index %>');
-    var wsgeo = new ReconnectingWebSocket("ws://svr3.creta.vn:1880/map001");
+    <script>
+      var wsgeo = new ReconnectingWebSocket('ws://svr3.creta.vn:1888/map001')
 
-    function Device(url){
-        this.ws = new ReconnectingWebSocket(url);
-        this.ws.onopen = function(event) {
-        // connection is open
-        };
+      function Device(url) {
+        this.ws = new ReconnectingWebSocket(url)
+        this.ws.onopen = function (event) {
+          // connection is open
+        }
 
-        this.ws.onclose = function(event) {
-        // try to reconnect in 5 seconds
-        };
+        this.ws.onclose = function (event) {
+          // try to reconnect in 5 seconds
+        }
         // handle open event
-        this.ws.addEventListener('open', function(event) {
-            console.log('Connected to server');
-        });
+        this.ws.addEventListener('open', function (event) {
+          console.log('Connected to server')
+        })
 
         // handle close event
-        this.ws.addEventListener('close', function(event) {
-            console.log('Disconnected from server');
-        });
+        this.ws.addEventListener('close', function (event) {
+          console.log('Disconnected from server')
+        })
 
         // handle error event
-        this.ws.addEventListener('error', function(event) {
-            console.log('Error:', event);
-        });
-    }
-    var d =  [];
-    d.push(new Device("ws://ws.uudamstudio.com:1880/control/lscmd1"));
-    d.push(new Device("ws://ws.uudamstudio.com:1880/control/lscmd2"));
-    d.push(new Device("ws://ws.uudamstudio.com:1880/control/lscmd3"));
+        this.ws.addEventListener('error', function (event) {
+          console.log('Error:', event)
+        })
+      }
+      var d = []
+      d.push(new Device('ws://svr3.creta.vn:1888/control/lscmd1'))
+      //   d.push(new Device('ws://ws.uudamstudio.com:1880/control/lscmd2'))
+      //   d.push(new Device('ws://ws.uudamstudio.com:1880/control/lscmd3'))
 
-    function control(x){
-        d[x].ws.send("1");
-    }
-    wsgeo.onopen = function(event) {
-    // connection is open
-    };
+      function control(x) {
+        d[0].ws.send(x)
+        try {
+          wsgeo.send(JSON.stringify(geo))
+        } catch (e) {
+          console.log(e)
+        }
+      }
+      wsgeo.onopen = function (event) {
+        // connection is open
+      }
 
-    wsgeo.onclose = function(event) {
-    // try to reconnect in 5 seconds
-    };
-    // handle open event
-    wsgeo.addEventListener('open', function(event) {
-        console.log('Connected to server');
-    });
+      wsgeo.onclose = function (event) {
+        // try to reconnect in 5 seconds
+      }
+      // handle open event
+      wsgeo.addEventListener('open', function (event) {
+        console.log('Connected to server')
+      })
 
-    // handle close event
-    wsgeo.addEventListener('close', function(event) {
-        console.log('Disconnected from server');
-    });
+      // handle close event
+      wsgeo.addEventListener('close', function (event) {
+        console.log('Disconnected from server')
+      })
 
-    // handle error event
-    wsgeo.addEventListener('error', function(event) {
-        console.log('Error:', event);
-    });
-
-</script>
-</body>
+      // handle error event
+      wsgeo.addEventListener('error', function (event) {
+        console.log('Error:', event)
+      })
+    </script>
+  </body>
 </html>
